@@ -54,10 +54,12 @@ public class Teleop6383 extends LinearOpMode {
         );
 
         if (gamepad1.b) {
-          chomp.in();
+          // chomp.in();
+          chomp.setPos("up");
         }
         if (gamepad1.a) {
-          chomp.out();
+          // chomp.out();
+          chomp.setPos("collect");
         }
 
 

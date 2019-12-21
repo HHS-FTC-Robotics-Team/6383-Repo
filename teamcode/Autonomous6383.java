@@ -58,11 +58,11 @@ public class Autonomous6383 extends LinearOpMode {
         c = new Chomp(
           hardwareMap.get(Servo.class, "claw")
         );
-
+        
         lift = new SciLift(
             hardwareMap.get(DcMotor.class, "liftmotor")
         );
-
+        
         f = new Find();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -90,6 +90,7 @@ public class Autonomous6383 extends LinearOpMode {
             telemetry.addData("globala", gps.globala);
             telemetry.addData("goalclicks", gps.goalclicks);
             telemetry.addData("globaly", gps.relativey);
+            telemetry.addData("servo", gps.collect.servo.getPosition());
             telemetry.update();
 
         }

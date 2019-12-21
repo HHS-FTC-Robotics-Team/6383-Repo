@@ -113,7 +113,6 @@ public class Gpsbrain extends LinearOpMode {
   }
 
   public void pop() {
-    sleep(5000);
     count = count + 1;
   }
 
@@ -123,8 +122,8 @@ public class Gpsbrain extends LinearOpMode {
       globaly = 0;
       globala = getAngle(); //we will always correct to this angle
       d.resetEncoderlf();
-      collect.setPos("up");
-      pop();
+      if (collect.setPos("up")) { pop(); }
+      // pop();
     }
     if(states[count] == "rest") {
       d.setPower(0, 0, 0, 0);
@@ -191,10 +190,10 @@ public class Gpsbrain extends LinearOpMode {
       // }
     }
     if(states[count] == "collect") {
-      collect.setPos("collect");
+      if (collect.setPos("collect")) { pop(); }
     }
     if(states[count] == "out") {
-      collect.setPos("up");
+      if (collect.setPos("up")) { pop(); }
     }
     if(states[count] == "lift"){
       if (isArgs[count]) {
