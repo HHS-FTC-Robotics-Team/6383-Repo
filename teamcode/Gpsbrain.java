@@ -14,7 +14,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import org.firstinspires.ftc.teamcode.Collect;
+import org.firstinspires.ftc.teamcode.Chomp;
 import org.firstinspires.ftc.teamcode.Drive;
 import org.firstinspires.ftc.teamcode.Find;
 import org.firstinspires.ftc.teamcode.SciLift;
@@ -66,8 +66,8 @@ public class Gpsbrain extends LinearOpMode {
   // private double[] args = new double[]{-1000, 5600};
   // private boolean[] isArgs = new boolean[]{true, true};
 
-  // Just seeking
-  public String[] states = new String[]{"init", "seek", "rest"};
+  // Just collecting
+  public String[] states = new String[]{"init", "collect", "rest"};
   private long[] args = new long[]{0, 0, 0};
   private boolean[] isArgs = new boolean[]{false, false, false};
 
@@ -95,10 +95,10 @@ public class Gpsbrain extends LinearOpMode {
   private Orientation lastAngles = new Orientation();
   private double globalAngle, power = 0.30, correction;
   public SciLift lift = null;
-  Collect collect = null;
+  Chomp collect = null;
   Find f = null;
 
-  public Gpsbrain(Drive drive, BNO055IMU acc, Collect c, Find find, SciLift scl) {
+  public Gpsbrain(Drive drive, BNO055IMU acc, Chomp c, Find find, SciLift scl) {
     d = drive;
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
       parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -113,6 +113,7 @@ public class Gpsbrain extends LinearOpMode {
   }
 
   public void pop() {
+    sleep(5000);
     count = count + 1;
   }
 
@@ -122,11 +123,13 @@ public class Gpsbrain extends LinearOpMode {
       globaly = 0;
       globala = getAngle(); //we will always correct to this angle
       d.resetEncoderlf();
+      collect.setPos("up");
       pop();
     }
     if(states[count] == "rest") {
       d.setPower(0, 0, 0, 0);
       lift.motor.setPower(0);
+      collect.setPos("down");
     }
     if(states[count] == "turn") {
       if (isArgs[count]) {
@@ -188,27 +191,10 @@ public class Gpsbrain extends LinearOpMode {
       // }
     }
     if(states[count] == "collect") {
-      if(collect.getDistance() > 10) {
-        d.setPower(1, 0, 0, 0.6);
-        collect.in();
-        globaly += d.getClickslf();
-        d.resetEncoderlf();
-      } else if (collect.getDistance() <= 10) {
-        d.setPower(0, 0, 0, 0);
-        collect.rest();
-        globaly += d.getClickslf();
-        d.resetEncoderlf();
-        pop();
-      }
+      collect.setPos("collect");
     }
     if(states[count] == "out") {
-      if(collect.getDistance() < 20) {
-        d.setPower(0, 0, 0, 0);
-        collect.out();
-      } else if (collect.getDistance() > 20) {
-        collect.rest();
-        pop();
-      }
+      collect.setPos("up");
     }
     if(states[count] == "lift"){
       if (isArgs[count]) {
@@ -279,25 +265,25 @@ public class Gpsbrain extends LinearOpMode {
       d.setPower(d.getLy(), d.getLx(), power/2 , d.getTurbo());
     }
   }
-  
+
   public void setGlobaly () {
     if (globala > 170 && globala < 190) {
       globaly -= d.getClickslf();
     } else {
       globaly += d.getClickslf();
-    } 
+    }
     d.resetEncoderlf();
   }
-  
+
   public void setGlobalx () {
     if (globala > 170 && globala < 190) {
       globalx -= d.getClickslf();
     } else {
       globalx += d.getClickslf();
-    } 
+    }
     d.resetEncoderlf();
   }
-  
+
   public void forwardTo(double y){ //init forward function
     // double dist = y-globaly;
     if (globala > 170 && globala < 190) { //turned around
@@ -306,7 +292,7 @@ public class Gpsbrain extends LinearOpMode {
       forward(y);
     }
   }
-  
+
   public void forward(double clicks){
     d.resetEncoderlf();
     goalclicks = clicks; // how far to go

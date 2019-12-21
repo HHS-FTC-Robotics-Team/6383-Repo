@@ -21,7 +21,7 @@ public class Teleop6383 extends LinearOpMode {
 
     private Drive d;
     private SciLift lift;
-    private Chomp chomp;
+    private Chomp chomp; //now controls one servo, the claw
     private Arm arm;
 
     @Override

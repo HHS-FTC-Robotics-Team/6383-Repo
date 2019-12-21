@@ -23,6 +23,42 @@ public class Chomp {
         servo.setPosition(position);
     }
 
+    public void setPos(double goal) {
+    double error = 0.05;
+    double increment = 0.07;
+    double pos1 = servo.getPosition();
+    if (pos1 > goal) {
+      pos1 -= increment;
+    } else if (pos1 < goal){
+      pos1 += increment;
+    } else if (pos1 < goal - error && pos1 > goal + error) {
+      pos1 = goal;
+    }
+      servo.setPosition(pos1);
+    }
+
+    public void setPos(String specificGoal) {
+      double goal = 0;
+      if (specificGoal == "up") {
+        goal = 0.0;
+      } else if (specificGoal == "down") {
+        goal = 0.8;
+      } else if (specificGoal == "collect") {
+        goal = 0.58;
+      }
+      double error = 0.05;
+      double increment = 0.07;
+      double pos1 = servo.getPosition();
+      if (pos1 > goal) {
+        pos1 -= increment;
+      } else if (pos1 < goal){
+        pos1 += increment;
+      } else if (pos1 < goal - error && pos1 > goal + error) {
+        pos1 = goal;
+      }
+      servo.setPosition(pos1);
+    }
+
     public void out() {
         if (position <= 0.99) {
             position += INCREMENT ;
