@@ -49,8 +49,8 @@ public class Teleop6383 extends LinearOpMode {
         d.setPower(
           -gamepad1.left_stick_y,
           -gamepad1.left_stick_x,
-          -gamepad1.right_stick_x,
-          gamepad1.right_trigger * 0.75
+          gamepad1.right_stick_x,
+          0.85 - (gamepad1.right_trigger * 0.8)
         );
 
         if (gamepad1.b) {
@@ -64,11 +64,15 @@ public class Teleop6383 extends LinearOpMode {
 
 
         if (gamepad1.left_bumper) {
+          // if (arm.getClicks() < 20) {
             arm.retract();
+          // }
         } else if (gamepad1.left_trigger > 0){
+          // if (arm.getClicks() < 300) {
             arm.extend(gamepad1.left_trigger);
+          // }
         } else {
-            arm.rest();
+          arm.rest();
         }
 
         if (gamepad1.x) {
@@ -81,17 +85,16 @@ public class Teleop6383 extends LinearOpMode {
 
         telemetry.addData("Status", "Run Time: ");
         telemetry.addData("Lift Power", lift.getPower());
-        // telemetry.addData("Arm Power", arm.getPower());
-        // telemetry.addData("Collect Power", collect.getPower());
-        // telemetry.addData("Collect Dist", collect.getDistance());
+        telemetry.addData("clawpos", chomp.position);
+        telemetry.addData("armpos", arm.getClicks());
         telemetry.addData("Ly", -gamepad1.left_stick_y);
         telemetry.addData("Lx", -gamepad1.left_stick_x);
-        telemetry.addData("Rx", -gamepad1.right_stick_x);
+        telemetry.addData("Rx", gamepad1.right_stick_x);
+        telemetry.addData("clicksdrive", d.getClickslf());
         telemetry.addData("lf", d.getPowerlf());
         telemetry.addData("lb", d.getPowerlb());
         telemetry.addData("rf", d.getPowerrf());
         telemetry.addData("rb", d.getPowerrb());
-        telemetry.addData("clawpos", chomp.position);
         telemetry.update();
 
       }

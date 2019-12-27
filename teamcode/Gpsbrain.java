@@ -26,11 +26,14 @@ import org.firstinspires.ftc.teamcode.SciLift;
 
 public class Gpsbrain extends LinearOpMode {
 
+  //for states
   public String state = "rest";
-  public Boolean turning = false;
+  public int count = 0; // counting what state we are on
+  //for seeking
   boolean angleIsSeeked = false;
   double seekAngle = 0;
   double seekDist = 0;
+  //for driving
   Drive d = null;
   double globalx = 0;
   double globaly = 0;
@@ -39,18 +42,25 @@ public class Gpsbrain extends LinearOpMode {
   double globala = 0;
   double dx = 0;
   double dy = 0;
-  double theta = 0;
-  double dtheta = 0;
-  double travelled = 0;
   public double goalclicks = 0;
   public double relativex = 0;
   public double relativey = 0;
+  double travelled = 0;
   double startclicks = 0;
+  //for turning
+  public boolean turning = false;
+  double theta = 0;
+  double dtheta = 0;
+  //for lift
   double liftgoalclicks = 0;
   double liftstartclicks = 0;
-  public int count = 0;
 
   //List of different command sequences===================================================================================
+
+  // public String[] states = new String[]   {"init","forward","rest"};
+  // private double[] args = new double[]    {0,500, 0};
+  // private boolean[] isArgs = new boolean[]{false,true, false};
+
 
   //public String[] states = new String[]{"lift", "rest"};
   //private double[] args = new double[]{-1000, 0};
@@ -67,9 +77,9 @@ public class Gpsbrain extends LinearOpMode {
   // private boolean[] isArgs = new boolean[]{true, true};
 
   // Just collecting
-  public String[] states = new String[]{"init", "collect", "rest"};
-  private long[] args = new long[]{0, 0, 0};
-  private boolean[] isArgs = new boolean[]{false, false, false};
+  // public String[] states = new String[]{"init", "collect", "rest"};
+  // private long[] args = new long[]{0, 0, 0};
+  // private boolean[] isArgs = new boolean[]{false, false, false};
 
   // Testing global x and y
   // public String[] states = new String[]{"init", "collect", "strafeTo", "rest"};
@@ -79,6 +89,10 @@ public class Gpsbrain extends LinearOpMode {
   // public String[] states = new String[]   {"init","forward","collect","forward","strafeTo", "out", "strafeTo","rest"};
   // private double[] args = new double[]    {0, 500, 0, 1400, -6000, 0, -1000, 0};
   // private boolean[] isArgs = new boolean[]{false, true, false, true, true,false, true, false};
+
+  public String[] states = new String[]   {"init","forwardTo","forwardTo","collect","forwardTo","strafeTo","out","rest"};
+  private double[] args = new double[]    {0,     500,        5000,       0,        2000,        300,        0,  0};
+  private boolean[] isArgs = new boolean[]{false, true,      true,       false,     true,      true,       false, false};
 
   // public String[] states = new String[]   {"init","strafeTo","strafeTo","turn","strafeTo","strafeTo","turn","rest"};
   // private double[] args = new double[]    {0,800,0,180,800,0,180,0};
@@ -95,10 +109,11 @@ public class Gpsbrain extends LinearOpMode {
   private Orientation lastAngles = new Orientation();
   private double globalAngle, power = 0.30, correction;
   public SciLift lift = null;
+  private Arm arm = null;
   Chomp collect = null;
   Find f = null;
 
-  public Gpsbrain(Drive drive, BNO055IMU acc, Chomp c, Find find, SciLift scl) {
+  public Gpsbrain(Drive drive, BNO055IMU acc, Chomp c, Find find, SciLift scl, Arm a) {
     d = drive;
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
       parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -110,6 +125,7 @@ public class Gpsbrain extends LinearOpMode {
     collect = c;
     f = find;
     lift = scl;
+    arm = a;
   }
 
   public void pop() {
@@ -117,6 +133,7 @@ public class Gpsbrain extends LinearOpMode {
   }
 
   public void update() {
+    //states down here
     if(states[count] == "init") {
       globalx = 0;
       globaly = 0;
@@ -164,7 +181,7 @@ public class Gpsbrain extends LinearOpMode {
         double[] result = f.findSkystoneAngle();
         seekAngle = result[0];
         if(result[1] > 0) {
-          seekDist = 6000/Math.tan(seekAngle);
+          seekDist = Math.tan(seekAngle)/6000;
           //strafe(seekDist);
           angleIsSeeked = true;
           // if(seekAngle < 0) {
@@ -219,6 +236,9 @@ public class Gpsbrain extends LinearOpMode {
     //     pop();
     //   }
     // }
+    // if(states[count] == "arm"){
+    //   if (arm.setPos("up")) { pop(); }
+    // }
   }
 
 
@@ -257,10 +277,11 @@ public class Gpsbrain extends LinearOpMode {
   public void correct() {
     double current = getAngle();
     double power =  (globala - current) / (Math.abs(globala - current));
-    if (globala - current > 1) {
+    if (globala - current < 1 && globala - current > -1) {
+      d.setPower(0,0,0,0);
+    } else if (globala - current > 1) {
       d.setPower(d.getLy(), d.getLx(), power , d.getTurbo());
-    }
-    if (globala - current < -1) {
+    } else if (globala - current < -1) {
       d.setPower(d.getLy(), d.getLx(), power/2 , d.getTurbo());
     }
   }
@@ -302,13 +323,14 @@ public class Gpsbrain extends LinearOpMode {
     double p = Math.abs(dist)/120;
     if(relativey > goalclicks - 25 && relativey < goalclicks + 25) {
       setGlobaly();
+      d.setPower(0, 0, 0, 0);
       pop();
     } else if(relativey < goalclicks) {
-      d.setPower(1, 0, 0, 0.6*p);
+      d.setPower(1, 0, 0, p);
       relativey += d.getClickslf();
       setGlobaly();
     } else if(relativey > goalclicks) {
-      d.setPower(-1, 0, 0, 0.6*p);
+      d.setPower(-1, 0, 0, p);
       relativey += d.getClickslf();
       setGlobaly();
     }
@@ -332,11 +354,11 @@ public class Gpsbrain extends LinearOpMode {
       setGlobalx();
       pop();
     } else if(relativex < goalclicks) {
-      d.setPower(0, -1, 0, 0.6*p);
+      d.setPower(0, -1, 0, 0.3);
       relativex += d.getClickslf();
       setGlobalx();
     } else if(relativex > goalclicks) {
-      d.setPower(0, 1, 0, 0.6*p);
+      d.setPower(0, 1, 0, 0.3);
       relativex += d.getClickslf();
       setGlobalx();
     }

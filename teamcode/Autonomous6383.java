@@ -32,6 +32,7 @@ import org.firstinspires.ftc.teamcode.Gpsbrain;
 import org.firstinspires.ftc.teamcode.Drive;
 import org.firstinspires.ftc.teamcode.Chomp;
 import org.firstinspires.ftc.teamcode.Find;
+import org.firstinspires.ftc.teamcode.Arm;
 
 
 @Autonomous
@@ -44,6 +45,7 @@ public class Autonomous6383 extends LinearOpMode {
     private Gpsbrain gps;
     private Find f;
     private SciLift lift;
+    private Arm arm;
 
     @Override
     public void runOpMode() {
@@ -58,16 +60,20 @@ public class Autonomous6383 extends LinearOpMode {
         c = new Chomp(
           hardwareMap.get(Servo.class, "claw")
         );
-        
+
         lift = new SciLift(
             hardwareMap.get(DcMotor.class, "liftmotor")
         );
-        
+
         f = new Find();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        gps = new Gpsbrain(d, imu, c, f, lift);
+        arm = new Arm(
+          hardwareMap.get(DcMotor.class, "armmotor")
+        );
+
+        gps = new Gpsbrain(d, imu, c, f, lift, arm);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
