@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
 
 public class Chomp {
@@ -14,13 +16,15 @@ public class Chomp {
 
     // Define class members
     Servo   servo;
-    double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
-
+    Rev2mDistanceSensor dist;
+    // double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
+    double position = 0.1;
     boolean rampUp = true;
 
-    public Chomp(Servo s) {
-        servo = s;
-        servo.setPosition(position);
+    public Chomp(Servo s, Rev2mDistanceSensor d) {
+      servo = s;
+      servo.setPosition(position);
+      dist = d;
     }
 
     public void setPos(double goal) {
@@ -60,6 +64,26 @@ public class Chomp {
       servo.setPosition(pos1);
       return false;
     }
+    
+    public boolean checkPos(String specificGoal) {
+      double goal = 0;
+      if (specificGoal == "up") {
+        goal = 0.0;
+      } else if (specificGoal == "down") {
+        goal = 0.7;
+      } else if (specificGoal == "collect") {
+        goal = 0.60;
+      }
+      double error = 0.015;
+      double increment = 0.01;
+      double pos1 = servo.getPosition();
+      if (pos1 > goal - error && pos1 < goal + error) {
+        pos1 = goal;
+        return true;
+      } else {
+        return false;
+      }
+    }
 
     public void out() {
         if (position <= 0.99) {
@@ -93,6 +117,11 @@ public class Chomp {
         position = 0.01;
       }
       servo.setPosition(position);
+    }
+    
+    public double getDist() {
+      double distance = dist.getDistance(DistanceUnit.CM);
+      return distance;
     }
 
     public void runOpMode() {

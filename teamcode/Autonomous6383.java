@@ -58,7 +58,8 @@ public class Autonomous6383 extends LinearOpMode {
         );
 
         c = new Chomp(
-          hardwareMap.get(Servo.class, "claw")
+          hardwareMap.get(Servo.class, "claw"),
+          hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
         );
 
         lift = new SciLift(

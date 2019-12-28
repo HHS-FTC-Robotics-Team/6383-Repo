@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -23,6 +24,8 @@ public class Teleop6383 extends LinearOpMode {
     private SciLift lift;
     private Chomp chomp; //now controls one servo, the claw
     private Arm arm;
+    
+    private double turbopower = 0;
 
     @Override
     public void runOpMode() {
@@ -40,17 +43,26 @@ public class Teleop6383 extends LinearOpMode {
         hardwareMap.get(DcMotor.class, "armmotor")
       );
       chomp = new Chomp(
-        hardwareMap.get(Servo.class, "claw")
+        hardwareMap.get(Servo.class, "claw"),
+        hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
       );
 
       waitForStart();
       while (opModeIsActive()) {
+        
+        if (gamepad1.right_trigger > 0) {
+          turbopower = 0.8 - (gamepad1.right_trigger * 0.6);
+        } else if (!chomp.checkPos("collect") && chomp.getDist() < 200) {
+          turbopower = 0.2 + ((chomp.getDist()/200) * 0.6);
+        } else {
+          turbopower = 0.7;
+        }
 
         d.setPower(
           -gamepad1.left_stick_y,
           -gamepad1.left_stick_x,
           gamepad1.right_stick_x,
-          0.85 - (gamepad1.right_trigger * 0.8)
+          turbopower
         );
 
         if (gamepad1.b) {
@@ -95,6 +107,8 @@ public class Teleop6383 extends LinearOpMode {
         telemetry.addData("lb", d.getPowerlb());
         telemetry.addData("rf", d.getPowerrf());
         telemetry.addData("rb", d.getPowerrb());
+        telemetry.addData("dist", chomp.getDist());
+        telemetry.addData("turbopower", turbopower);
         telemetry.update();
 
       }
