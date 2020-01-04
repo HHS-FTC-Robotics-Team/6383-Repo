@@ -59,7 +59,7 @@ public class Autonomous6383 extends LinearOpMode {
 
         c = new Chomp(
           hardwareMap.get(Servo.class, "claw"),
-          hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
+            hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
         );
 
         lift = new SciLift(
@@ -86,7 +86,7 @@ public class Autonomous6383 extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             gps.update(); //all the autonomous stuff
-            if (!gps.turning) { gps.correct(); } //keeping the robot straight
+            //if (!gps.turning) { gps.correct(); } //keeping the robot straight
 
             telemetry.addData("State", gps.states[gps.count]);
             telemetry.addData("Count", gps.count);

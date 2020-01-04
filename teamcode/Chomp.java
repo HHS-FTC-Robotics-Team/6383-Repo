@@ -9,16 +9,16 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
 
 public class Chomp {
-    static final double INCREMENT   = 0.001;     // amount to slew servo each CYCLE_MS cycle
-    static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.0;     // Minimum rotational position
+    static final double INCREMENT   = 0.1;     // amount to slew servo each CYCLE_MS cycle
+    // static final int    CYCLE_MS    =   50;     // period of each cycle
+    // static final double MAX_POS     =  1.0;     // Maximum rotational position
+    // static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
     Servo   servo;
     Rev2mDistanceSensor dist;
     // double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
-    double position = 0.1;
+    double position = 1;
     boolean rampUp = true;
 
     public Chomp(Servo s, Rev2mDistanceSensor d) {
@@ -28,8 +28,8 @@ public class Chomp {
     }
 
     public void setPos(double goal) {
-    double error = 0.05;
-    double increment = 0.07;
+    double error = 0.15;
+    double increment = INCREMENT;
     double pos1 = servo.getPosition();
     if (pos1 > goal) {
       pos1 -= increment;
@@ -46,12 +46,12 @@ public class Chomp {
       if (specificGoal == "up") {
         goal = 0.0;
       } else if (specificGoal == "down") {
-        goal = 0.7;
+        goal = 1;
       } else if (specificGoal == "collect") {
         goal = 0.60;
       }
-      double error = 0.015;
-      double increment = 0.01;
+      double error = 0.15;
+      double increment = INCREMENT;
       double pos1 = servo.getPosition();
       if (pos1 > goal - error && pos1 < goal + error) {
         pos1 = goal;
@@ -74,11 +74,9 @@ public class Chomp {
       } else if (specificGoal == "collect") {
         goal = 0.60;
       }
-      double error = 0.015;
-      double increment = 0.01;
+      double error = 0.15;
       double pos1 = servo.getPosition();
       if (pos1 > goal - error && pos1 < goal + error) {
-        pos1 = goal;
         return true;
       } else {
         return false;

@@ -51,9 +51,9 @@ public class Teleop6383 extends LinearOpMode {
       while (opModeIsActive()) {
         
         if (gamepad1.right_trigger > 0) {
-          turbopower = 0.8 - (gamepad1.right_trigger * 0.6);
-        } else if (!chomp.checkPos("collect") && chomp.getDist() < 200) {
-          turbopower = 0.2 + ((chomp.getDist()/200) * 0.6);
+          turbopower = 0.8 - (gamepad1.right_trigger * 0.8);
+        // } else if (!chomp.checkPos("collect") && chomp.getDist() < 200) {
+        //   turbopower = 0.2 + ((chomp.getDist()/200) * 0.6);
         } else {
           turbopower = 0.7;
         }
