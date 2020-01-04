@@ -96,7 +96,7 @@ public class Autonomous6383 extends LinearOpMode {
             telemetry.addData("globaly", gps.globaly);
             telemetry.addData("globala", gps.globala);
             telemetry.addData("goalclicks", gps.goalclicks);
-            telemetry.addData("globaly", gps.relativey);
+            telemetry.addData("relativey", gps.relativey);
             telemetry.addData("servo", gps.collect.servo.getPosition());
             telemetry.update();
 
