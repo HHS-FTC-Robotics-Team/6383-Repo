@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.SciLift;
 //More information on how we control the bot here:
 //https://github.com/HHS-FTC-Robotics-Team/Team-Resources/wiki/States
 
-public class Gpsbrain extends LinearOpMode {
+public class GpsbrainBlueFoundation extends LinearOpMode {
 
   //for states
   public String state = "rest";
@@ -100,10 +100,10 @@ public class Gpsbrain extends LinearOpMode {
   // private double[] args = new double[]{150, 1200, 0};
   // private boolean[] isArgs = new boolean[]{true, true, false};
   
-  // NEW Go Forward and park on midline
-  public String[] states = new String[]{ "forward", "rest"};
-  private double[] args = new double[]{600, 0};
-  private boolean[] isArgs = new boolean[]{true, false};
+  // NEW forward, turn, then forward to midline closest to neutral bridge
+  public String[] states = new String[]{"forward", "turn","forward", "rest"};
+  private double[] args = new double[]{ 900, 90, 1000, 0};
+  private boolean[] isArgs = new boolean[]{true,true, true, false};
   
 
 
@@ -117,7 +117,7 @@ public class Gpsbrain extends LinearOpMode {
   Chomp collect = null;
   Find f = null;
 
-  public Gpsbrain(Drive drive, BNO055IMU acc, Chomp c, Find find, SciLift scl, Arm a) {
+  public GpsbrainBlueFoundation(Drive drive, BNO055IMU acc, Chomp c, Find find, SciLift scl, Arm a) {
     d = drive;
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
       parameters.mode                = BNO055IMU.SensorMode.IMU;

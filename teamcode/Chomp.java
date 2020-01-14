@@ -23,7 +23,7 @@ public class Chomp {
 
     public Chomp(Servo s, Rev2mDistanceSensor d) {
       servo = s;
-      servo.setPosition(position);
+      // servo.setPosition(position);
       dist = d;
     }
 
